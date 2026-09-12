@@ -5,7 +5,7 @@ from passlib.context import CryptContext
 from jose import jwt, JWTError
 
 from database import SessionLocal
-from models import User, Message
+from models import User, Message, RoomMember
 import schemas
 from auth import verify_password, create_access_token, get_current_user, SECRET_KEY, ALGORITHM
 from routers import rooms
@@ -98,7 +98,19 @@ async def websocket_endpoint(websocket: WebSocket, room_id: int, token: str = Qu
     db = SessionLocal()
     try:
         user = get_user_from_token(token, db)
+        if user is None:
+            await websocket.close(code=1008)
+            return
     except JWTError:
+        await websocket.close(code=1008)
+        return
+
+    is_member = db.query(RoomMember).filter(
+        RoomMember.room_id == room_id,
+        RoomMember.user_id == user.id
+    ).first()
+
+    if not is_member:
         await websocket.close(code=1008)
         return
 
