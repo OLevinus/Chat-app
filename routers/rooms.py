@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database import SessionLocal
 from models import Room, RoomMember, Message, User
-from schemas import RoomCreate, RoomRead, MessageRead
+from schemas import RoomCreate, RoomRead, MessageRead, RoomMemberInfo
 from auth import get_current_user
 
 router = APIRouter(prefix="/rooms", tags=["rooms"])
@@ -65,3 +65,35 @@ def get_messages(room_id: int, db: Session = Depends(get_db),
         raise HTTPException(
             status_code=403, detail="Not a member of this room")
     return db.query(Message).filter(Message.room_id == room_id).order_by(Message.created_at).all()
+
+
+@router.get("/{room_id}/members", response_model=list[RoomMemberInfo])
+def list_room_members(room_id: int, db: Session = Depends(get_db),
+                      current_user: User = Depends(get_current_user)):
+    is_member = db.query(RoomMember).filter_by(
+        user_id=current_user.id, room_id=room_id).first()
+    if not is_member:
+        raise HTTPException(
+            status_code=403, detail="Not a member of this room")
+
+    members = (
+        db.query(User)
+        .join(RoomMember, RoomMember.user_id == User.id)
+        .filter(RoomMember.room_id == room_id)
+        .all()
+    )
+    return members
+
+
+@router.delete("/{room_id}/leave")
+def leave_room(room_id: int, db: Session = Depends(get_db),
+               current_user: User = Depends(get_current_user)):
+    membership = db.query(RoomMember).filter_by(
+        user_id=current_user.id, room_id=room_id).first()
+    if not membership:
+        raise HTTPException(
+            status_code=400, detail="You are not a member of this room")
+
+    db.delete(membership)
+    db.commit()
+    return {"detail": "left room"}

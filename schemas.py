@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 # USER SCHEMAS
 
@@ -56,6 +56,14 @@ class RoomMemberCreate(RoomMemberBase):
 class RoomMemberRead(RoomMemberBase):
     id: int
     joined_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class RoomMemberInfo(BaseModel):
+    id: int
+    username: str
 
     class Config:
         from_attributes = True
