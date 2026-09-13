@@ -3,6 +3,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 from jose import jwt, JWTError
+from fastapi.middleware.cors import CORSMiddleware
 
 from database import SessionLocal
 from models import User, Message, RoomMember
@@ -11,6 +12,13 @@ from auth import verify_password, create_access_token, get_current_user, SECRET_
 from routers import rooms
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 app.include_router(rooms.router)
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")

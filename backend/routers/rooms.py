@@ -97,3 +97,17 @@ def leave_room(room_id: int, db: Session = Depends(get_db),
     db.delete(membership)
     db.commit()
     return {"detail": "left room"}
+
+
+@router.get("/discover", response_model=list[RoomRead])
+def discover_rooms(db: Session = Depends(get_db),
+                   current_user: User = Depends(get_current_user)):
+    my_room_ids = [
+        m.room_id for m in db.query(RoomMember).filter_by(user_id=current_user.id).all()
+    ]
+    return (
+        db.query(Room)
+        .filter(Room.is_direct == 0)
+        .filter(~Room.id.in_(my_room_ids))
+        .all()
+    )
