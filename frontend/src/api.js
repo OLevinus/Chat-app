@@ -1,4 +1,5 @@
 import axios from 'axios'
+export const getRoom = (roomId) => api.get(`/rooms/${roomId}`)
 
 const API_BASE_URL = 'http://localhost:8000' // adjust if your backend runs elsewhere
 

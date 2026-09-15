@@ -64,7 +64,25 @@ def get_messages(room_id: int, db: Session = Depends(get_db),
     if not member:
         raise HTTPException(
             status_code=403, detail="Not a member of this room")
-    return db.query(Message).filter(Message.room_id == room_id).order_by(Message.created_at).all()
+    rows = (
+        db.query(Message, User.username)
+        .join(User, Message.sender_id == User.id)
+        .filter(Message.room_id == room_id)
+        .order_by(Message.created_at)
+        .all()
+    )
+
+    return [
+        {
+            "id": msg.id,
+            "room_id": msg.room_id,
+            "sender_id": msg.sender_id,
+            "sender": username,
+            "content": msg.content,
+            "created_at": msg.created_at,
+        }
+        for msg, username in rows
+    ]
 
 
 @router.get("/{room_id}/members", response_model=list[RoomMemberInfo])
@@ -111,3 +129,18 @@ def discover_rooms(db: Session = Depends(get_db),
         .filter(~Room.id.in_(my_room_ids))
         .all()
     )
+
+
+@router.get("/{room_id}", response_model=RoomRead)
+def get_room(room_id: int, db: Session = Depends(get_db),
+             current_user: User = Depends(get_current_user)):
+    member = db.query(RoomMember).filter_by(
+        user_id=current_user.id, room_id=room_id).first()
+    if not member:
+        raise HTTPException(
+            status_code=403, detail="Not a member of this room")
+
+    room = db.query(Room).filter(Room.id == room_id).first()
+    if not room:
+        raise HTTPException(status_code=404, detail="Room not found")
+    return room

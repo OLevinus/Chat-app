@@ -81,8 +81,8 @@ class MessageCreate(MessageBase):
 
 class MessageRead(MessageBase):
     id: int
-    room_id: int
     sender_id: int
+    room_id: int
     created_at: datetime
 
     class Config:

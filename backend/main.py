@@ -132,6 +132,7 @@ async def websocket_endpoint(websocket: WebSocket, room_id: int, token: str = Qu
             db.refresh(msg)
             await manager.broadcast(room_id, {
                 "sender": user.username,
+                "sender_id": user.id,
                 "content": msg.content,
                 "created_at": msg.created_at.isoformat(),
             })
