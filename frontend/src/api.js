@@ -1,5 +1,4 @@
 import axios from 'axios'
-export const getRoom = (roomId) => api.get(`/rooms/${roomId}`)
 
 const API_BASE_URL = 'http://localhost:8000' // adjust if your backend runs elsewhere
 
@@ -33,6 +32,7 @@ export const getCurrentUser = () => api.get('/me')
 export const getMyRooms = () => api.get('/rooms/')
 export const createRoom = (name) => api.post('/rooms/', { name, is_direct: 0 })
 export const joinRoom = (roomId) => api.post(`/rooms/${roomId}/join`)
+export const getRoom = (roomId) => api.get(`/rooms/${roomId}`)
 export const getRoomMessages = (roomId) => api.get(`/rooms/${roomId}/messages`)
 export const getRoomMembers = (roomId) => api.get(`/rooms/${roomId}/members`)
 export const leaveRoom = (roomId) => api.delete(`/rooms/${roomId}/leave`)
