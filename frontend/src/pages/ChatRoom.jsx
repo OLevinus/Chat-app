@@ -3,6 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { getRoomMessages, leaveRoom, getRoom, getRoomMembers } from '../api'
 import Toast from '../components/Toast'
 
+const WS_BASE_URL = import.meta.env.VITE_WS_BASE_URL || 'ws://127.0.0.1:8000'
+
 function ChatRoom() {
     const { roomId } = useParams()
     const navigate = useNavigate()
@@ -37,7 +39,7 @@ function ChatRoom() {
 
     const connectWebSocket = useCallback(() => {
         const token = localStorage.getItem('token')
-        const socket = new WebSocket(`ws://127.0.0.1:8000/ws/${roomId}?token=${token}`)
+        const socket = new WebSocket(`${WS_BASE_URL}/ws/${roomId}?token=${token}`)
         ws.current = socket
         isClosingRef.current = false
 
