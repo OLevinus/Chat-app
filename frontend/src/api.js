@@ -37,5 +37,6 @@ export const getRoomMessages = (roomId) => api.get(`/rooms/${roomId}/messages`)
 export const getRoomMembers = (roomId) => api.get(`/rooms/${roomId}/members`)
 export const leaveRoom = (roomId) => api.delete(`/rooms/${roomId}/leave`)
 export const getDiscoverRooms = () => api.get('/rooms/discover')
+export const deleteRoom = (roomId) => api.delete(`/rooms/${roomId}`)
 
 export default api
