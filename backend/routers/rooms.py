@@ -117,6 +117,26 @@ def leave_room(room_id: int, db: Session = Depends(get_db),
     return {"detail": "left room"}
 
 
+@router.delete("/{room_id}")
+def delete_room(room_id: int, db: Session = Depends(get_db),
+                current_user: User = Depends(get_current_user)):
+    room = db.query(Room).filter(Room.id == room_id).first()
+    if not room:
+        raise HTTPException(status_code=404, detail="Room not found")
+
+    is_member = db.query(RoomMember).filter_by(
+        user_id=current_user.id, room_id=room_id).first()
+    if not is_member:
+        raise HTTPException(
+            status_code=403, detail="Not a member of this room")
+
+    db.query(Message).filter(Message.room_id == room_id).delete()
+    db.query(RoomMember).filter(RoomMember.room_id == room_id).delete()
+    db.delete(room)
+    db.commit()
+    return {"detail": "room deleted"}
+
+
 @router.get("/discover", response_model=list[RoomRead])
 def discover_rooms(db: Session = Depends(get_db),
                    current_user: User = Depends(get_current_user)):
