@@ -2,7 +2,7 @@
 
 A real-time multi-user chat application built with FastAPI, WebSockets, and React.
 
-**Live demo:** [Frontend]([https://backend-gamma-pied-18.vercel.app]) · [Backend API](https://chat-app-1-u2ej.onrender.com)
+**Live demo:** [Frontend]([https://backend-gamma-pied-18.vercel.app]) ·
 
 ## Features
 
