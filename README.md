@@ -122,12 +122,4 @@ chat-app/
         └── api.js        # Shared API call helpers
 ```
 
-## What I Learned
-
-<!-- Building this project pushed me beyound tutorial-level coding into the kind of
-  debuggingand architecture decisions that come with a real, deployed application-->
-  In summary, I learned ;
-<!-- - Handling WebSocket auth and reconnect logic -->
-<!-- - Managing environment variables across Render/Vercel/Neon -->
-<!-- - Debugging cross-origin issues (CORS) and SPA routing on Vercel -->
 
